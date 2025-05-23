@@ -1,61 +1,291 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🚀 Project Laravel
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Ini adalah proyek berbasis [Laravel](https://laravel.com/) — PHP framework untuk web artisan.
 
-## About Laravel
+## 🛠️ Persyaratan
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Pastikan sudah terinstal di sistem Anda:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- PHP >= 8.1
+- Composer
+- MySQL / PostgreSQL / SQLite
+- Node.js & npm (jika menggunakan Vite atau frontend build)
+- Laravel CLI (opsional)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 📦 Instalasi
 
-## Learning Laravel
+1. **Clone repository:**
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+   ```bash
+   git clone https://github.com/Arya0D/frontend-uas-230202054.git
+   cd nama-proyek
+   ```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+2. **Install dependensi PHP:**
+   ```
+   composer install
+   ```
+   
+3. **Salin file konfigurasi .env:**
+   ```
+   cp .env.example .env
+   ```
+4. **Generate application key:**
+   ```
+   php artisan key:generate
+   ```
+## ⚙️ Menjalankan Project Laravel
+```
+php artisan serve
+```
+Aplikasi akan berjalan di:``` http://localhost:8000```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- usernamane untuk login : ```admin```
+- password untuk login : ```password```
 
-## Laravel Sponsors
+## 🤖 Konfigurasi Backend
+1. **Clone repository:**
+   Untuk repository backend ada di: https://github.com/Arfilal/backend_sinilai.git
+   
+   ```bash
+   git clone https://github.com/username/nama-proyek.git
+   cd nama-proyek
+   ```
+3. **Buka file .env dan sesuaikan bagian berikut:**
+   ```
+   database.default.hostname = localhost
+   database.default.database = db_uas_230202054
+   database.default.username = root
+   database.default.password = 
+   database.default.DBDriver = MySQLi
+   database.default.port = 3306
+   ```
+4. **Atur Controller Mahasiswa di /App/Controllers/Mahasiswa.php**
+```
+   <?php
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+namespace App\Controllers;
 
-### Premium Partners
+use CodeIgniter\API\ResponseTrait;
+use App\Models\ModelMahasiswa;
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+class Mahasiswa extends BaseController
+{
+    use ResponseTrait;
+    protected $model;
 
-## Contributing
+    function __construct()
+    {
+        $this->model = new ModelMahasiswa();
+    }
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+    public function index()
+    {
+        $data = $this->model->orderBy('nama', 'asc')->findAll();
+        return $this->respond($data, 200);
+    }
 
-## Code of Conduct
+    public function create()
+    {
+        // Ambil data dari request
+        // $npm = $this->request->getVar('npm');
+        // $nama_mhs = $this->request->getVar('nama_mhs');
+        // $kode_kelas = $this->request->getVar('kode_kelas');
+        // $id_prodi = $this->request->getVar('id_prodi');
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
-## Security Vulnerabilities
+        $npm = $this->request->getVar('nim');
+        $nama_mhs = $this->request->getVar('nama');
+        $kode_kelas = $this->request->getVar('kode_kelas');
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+        // Pastikan data valid
+        if (empty($npm) || empty($nama_mhs)) {
+            return $this->response->setJSON(['error' => 'Data tidak lengkap']);
+        }
 
-## License
+        // Masukkan data ke dalam model
+        $data = [
+            'nim' => $npm,
+            'nama' => $nama_mhs,
+            'kode_kelas' => $kode_kelas,
+        ];
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+        // Insert data ke database
+        if ($this->model->insert($data)) {
+            return $this->response->setJSON(['message' => 'Aspirasi berhasil dikirim']);
+        } else {
+            return $this->response->setJSON(['error' => 'Gagal mengirim aspirasi']);
+        }
+    }
+
+    public function edit($npm)
+    {
+        $mahasiswa = $this->model->find($npm);
+        if (!$mahasiswa) {
+            return $this->response->setStatusCode(404)->setJSON(['message' => 'Data tidak ditemukan']);
+        }
+        return $this->response->setJSON($mahasiswa);
+    }
+
+    public function update($npm)
+    {
+        // Ambil data dari request
+        $nama_mhs = $this->request->getVar('nama');
+        $kode_kelas = $this->request->getVar('kode_kelas');
+
+        // Validasi data
+        if (!$this->validate([
+            'nama' => 'required|min_length[3]',
+            'kode_kelas' => 'required',
+        ])) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        // Cek apakah data mahasiswa dengan npm tersebut ada
+        $existing = $this->model->where('nim', $npm)->first();
+        if (!$existing) {
+            return $this->failNotFound("Data tidak ditemukan untuk NPM $npm");
+        }
+
+        // Data yang akan diperbarui
+        $data = [
+            'nama' => $nama_mhs,
+            'kode_kelas' => $kode_kelas,
+        ];
+
+        // Update data
+        $updated = $this->model->update($npm, $data);
+
+        if ($updated) {
+            return $this->respond([
+                'status' => 200,
+                'messages' => ['success' => "Data berhasil diperbarui"]
+            ]);
+        }
+
+        return $this->fail("Gagal memperbarui data.");
+    }
+
+    public function delete($npm)
+    {
+        // Cari data mahasiswa berdasarkan npm
+        $data = $this->model->where('nim', $npm)->first();
+
+        // Cek apakah data mahasiswa ditemukan
+        if ($data) {
+            // Hapus data mahasiswa berdasarkan npm
+            $this->model->where('nim', $npm)->delete();
+
+            // Response sukses jika data berhasil dihapus
+            $response = [
+                'status' => 200,
+                'error' => null,
+                'messages' => [
+                    'success' => "Data mahasiswa dengan NPM $npm berhasil dihapus"
+                ]
+            ];
+            return $this->respond($response);
+        } else {
+            // Jika data mahasiswa tidak ditemukan
+            return $this->failNotFound("Data mahasiswa dengan NPM $npm tidak ditemukan");
+        }
+    }
+
+    // 🔥 Menambahkan fungsi untuk mendapatkan data mahasiswa dengan prodi dan kelas
+    public function getMahasiswaWithProdi()
+    {
+        $data = $this->model->getMahasiswaWithProdi();
+
+        if ($data) {
+            return $this->respond($data, 200);
+        } else {
+            return $this->failNotFound("Data mahasiswa tidak ditemukan.");
+        }
+    }
+
+    public function show($id = null)
+    {
+        $data = $this->model->where('nim', $id)->findAll();
+        if ($data) {
+            return $this->respond($data, 200);
+        } else {
+            return $this->failNotFound("Data tidak ditemukan untuk kode_matkul $kode_matkul");
+        }
+    }
+}
+```
+
+4. **Atur Model Mahasisiswa di /App/Models/MahasiswaModel.php**
+```
+<?php
+namespace App\Models;
+
+use CodeIgniter\Model;
+
+class ModelMahasiswa extends Model
+{
+    protected $table = "mahasiswa";
+    protected $primaryKey = "id";
+    protected $allowedFields = ['nim','nama','kode_kelas'];
+
+    protected $validationRules = [
+        'nim' => 'required',
+        'nama' => 'required',
+        'kode_kelas' => 'required',
+    ];
+
+    protected $validationMessages = [
+        'nim' => ['required' => 'Silahkan masukkan NPM'],
+        'nama' => ['required' => 'Silahkan masukkan nama mahasiswa'],
+        'kode_kelas' => ['required' => 'Silahkan masukkan kode kelas'],    ];
+
+    // 🔥 Fungsi untuk mendapatkan data mahasiswa dengan informasi prodi dan kelas
+    public function getMahasiswaWithProdi()
+    {
+        return $this->db->table('mahasiswa m')
+            ->select([
+                'm.npm',
+                'm.nama_mhs',
+                'm.kode_kelas',
+                'p.id_prodi',
+                'p.nama_prodi'
+            ])
+            ->join('prodi p', 'm.id_prodi = p.id_prodi')
+            ->join('kelas k', 'm.kode_kelas = k.kode_kelas')
+            ->distinct()
+            ->orderBy('m.npm', 'ASC')
+            ->get()
+            ->getResultArray();
+    }
+}
+
+```
+
+## ⚙️ Menjalankan Backend
+```
+php artisan serve
+```
+Aplikasi akan berjalan di:``` http://localhost:8080```
+
+## 🛬 Endpoint API
+```
+php artisan serve
+```
+### Endpoint API Mahasiswa
+- GET: ``` http://localhost:8080/mahasiswa```
+- POST: ``` http://localhost:8080/mahasiswa```
+- PUT: ``` http://localhost:8080/mahasiswa/{nim}```
+- DEL: ``` http://localhost:8080/mahasiswa/{nim}```
+
+### Endpoint API Matakuliah
+- GET: ``` http://localhost:8080/matakuliah```
+- POST: ``` http://localhost:8080/matakuliah```
+- PUT: ``` http://localhost:8080/matakuliah/{kode_matkul}```
+- DEL: ``` http://localhost:8080/matakuliah/{kode_matkul}```
+
+
+
+
+
+
+
