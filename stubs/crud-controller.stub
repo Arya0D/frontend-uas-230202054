@@ -1,0 +1,93 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+
+class {{className}}Controller extends Controller
+{
+    protected $client;
+    protected $baseUrl;
+
+    public function __construct()
+    {
+        $this->client = new Client();
+        $this->baseUrl = 'http://localhost:8080';
+    }
+
+    public function index()
+    {
+        try {
+            $response = $this->client->get("{$this->baseUrl}/{{resource}}");
+            $data = json_decode($response->getBody(), true);
+
+            return view('admin.{{resource}}.index', ['{{resource}}' => $data]);
+        } catch (RequestException $e) {
+            return back()->with('error', 'Failed to fetch data: ' . $e->getMessage());
+        }
+    }
+
+    public function create()
+    {
+        return view('admin.{{resource}}.create');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            {{validationRules}}
+        ]);
+
+        try {
+            $this->client->post("{$this->baseUrl}/{{resource}}", [
+                'json' => $request->only([{{requestFields}}]),
+            ]);
+
+            return redirect()->route('{{resource}}.index')->with('success', '{{className}} berhasil ditambahkan');
+        } catch (RequestException $e) {
+            return back()->with('error', 'Failed to add data: ' . $e->getMessage())->withInput();
+        }
+    }
+
+    public function edit($id)
+    {
+        try {
+            $response = $this->client->get("{$this->baseUrl}/{{resource}}/{$id}");
+            $data = json_decode($response->getBody(), true);
+
+            return view('admin.{{resource}}.edit', ['{{resource}}' => $data]);
+        } catch (RequestException $e) {
+            return back()->with('error', 'Failed to fetch data: ' . $e->getMessage());
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            {{validationRules}}
+        ]);
+
+        try {
+            $this->client->put("{$this->baseUrl}/{{resource}}/{$id}", [
+                'json' => $request->only([{{requestFields}}]),
+            ]);
+
+            return redirect()->route('{{resource}}.index')->with('success', '{{className}} berhasil diperbarui');
+        } catch (RequestException $e) {
+            return back()->with('error', 'Failed to update data: ' . $e->getMessage())->withInput();
+        }
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $this->client->delete("{$this->baseUrl}/{{resource}}/{$id}");
+
+            return redirect()->route('{{resource}}.index')->with('success', '{{className}} berhasil dihapus');
+        } catch (RequestException $e) {
+            return back()->with('error', 'Failed to delete data: ' . $e->getMessage());
+        }
+    }
+}
