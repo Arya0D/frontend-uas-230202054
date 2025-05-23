@@ -283,6 +283,14 @@ php artisan serve
 - PUT: ``` http://localhost:8080/matakuliah/{kode_matkul}```
 - DEL: ``` http://localhost:8080/matakuliah/{kode_matkul}```
 
+## Firtur Tambahan Ringan
+- **Login**
+  ![image](https://github.com/user-attachments/assets/7097e9e1-be42-4c3c-96e1-cd079916b7dd)
+- **Search mengguankan DataTables**
+  ![{B2110FAD-70A4-49E8-9575-4D4FC5E8C0F6}](https://github.com/user-attachments/assets/4137a3d0-b66e-4d16-8512-0289e192179e)
+
+
+
 
 
 
